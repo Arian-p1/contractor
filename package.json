@@ -5,7 +5,10 @@
   "scripts": {
     "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -c",
     "lint": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
-    "test": "anchor test"
+    "test": "bash scripts/sync-idl.sh && anchor test --skip-build",
+    "build:program": "anchor build --no-idl",
+    "sync:idl": "bash scripts/sync-idl.sh",
+    "test:full": "anchor build --no-idl && bash scripts/sync-idl.sh && anchor test --skip-build"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.1",

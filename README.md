@@ -1,8 +1,19 @@
 # Contractor
 
-Non-custodial, anonymous **native SOL escrow** on Solana (Anchor).
+Non-custodial, anonymous **native SOL escrow** on Solana (Anchor 0.30.1).
 
 Payer deposits SOL into a deal PDA. Funds **release** only when **both** parties confirm complete (protocol fee applies). **Mutual cancel** refunds the payer **100%** (no fee). No KYC. No admin / pause / upgrade / emergency withdraw.
+
+## Build status (box-verified)
+
+| Check | Status |
+|-------|--------|
+| `anchor build --no-idl` | ✅ SBF `.so` builds (platform-tools **v1.48** / rustc 1.84; see [docs/BUILD-NOTES.md](docs/BUILD-NOTES.md)) |
+| IDL via `anchor build` | ⚠️ Host rustc 1.98 vs `anchor-syn` 0.30.1 — use committed [idl/contractor.json](idl/contractor.json) + `anchor idl type` |
+| `anchor test --skip-build` | ✅ **14 passing** |
+| `cd app && npm run build` | ✅ static `adapter-static` → `app/build/` |
+
+Program id (dev keypair): `DPcFT7E8GWzzgUfzP3M1VgBnipr8eR5Y4yv5f28wRt7k`
 
 ## State machine
 
@@ -20,18 +31,19 @@ stateDiagram-v2
 ## Quickstart
 
 ```bash
-# Program
-anchor build
-anchor test
+# Program (see docs/BUILD-NOTES.md for toolchain pins)
+anchor build --no-idl
+cp idl/contractor.json target/idl/contractor.json
+mkdir -p target/types
+anchor idl type target/idl/contractor.json -o target/types/contractor.ts
+anchor test --skip-build
 
 # Frontend (static / IPFS-ready)
 cd app
 cp .env.example .env
 npm install
-npm run dev      # or: npm run build
+npm run build   # or: npm run dev
 ```
-
-Program id (dev keypair in repo deploy path): `DPcFT7E8GWzzgUfzP3M1VgBnipr8eR5Y4yv5f28wRt7k`
 
 ## Repo layout
 
@@ -40,7 +52,10 @@ Program id (dev keypair in repo deploy path): `DPcFT7E8GWzzgUfzP3M1VgBnipr8eR5Y4
 | `programs/contractor/` | Anchor program |
 | `tests/` | Integration tests |
 | `app/` | SvelteKit + wallet UI (`adapter-static`) |
-| `docs/` | Architecture, deploy/IPFS, marketing, legal-risk |
+| `idl/` | Checked-in IDL (workaround for host IDL codegen) |
+| `scripts/` | Initialize config, `--final` upgrade authority, launch checklist |
+| `docs/` | Architecture, deploy/IPFS, **marketing**, legal-risk |
+| `docs/marketing/` | Social thread + launch checklist |
 
 ## Instructions
 
@@ -59,20 +74,25 @@ Default fee **250 bps (2.5%)**, max **1000 bps**. Fee **only** on successful rel
 - Documented deploy: `solana program set-upgrade-authority … --final`, discard deployer key
 - Exact deposit amount; status gates prevent double release
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/DEPLOY.md](docs/DEPLOY.md).
 
-## Legal disclaimer
+## Marketing & legal
 
-This software is provided **as-is** with **no warranty**. It is **not** legal, tax, or financial advice. Non-custodial design does **not** eliminate regulatory risk for operators or users. Read [docs/LEGAL-RISK.md](docs/LEGAL-RISK.md) and consult counsel before mainnet use.
+- Go-to-market copy, landing blocks, social drafts: [docs/MARKETING.md](docs/MARKETING.md)
+- Launch sequence: [docs/marketing/launch-checklist.md](docs/marketing/launch-checklist.md)
+- Honest risk notes (not legal advice): [docs/LEGAL-RISK.md](docs/LEGAL-RISK.md)
 
-## Next steps
+## What’s next for launch
 
-- [ ] Independent security audit
-- [ ] Mainnet deploy + `--final` upgrade authority
-- [ ] Multisig fee recipient
-- [ ] Pin frontend to IPFS / SNS
-- [ ] Optional: SPL token support, timeouts (explicit v1 non-goals today)
+1. Independent **security audit** + fix findings  
+2. **Counsel** before collecting mainnet fees  
+3. Fee recipient → published **multisig**  
+4. Devnet demo → mainnet deploy + `--final`  
+5. Pin UI to **IPFS** / optional SNS  
+6. Optional later: SPL tokens, timeouts (explicit v1 non-goals)
+
+Use `./scripts/checklist-mainnet.sh` as a printable gate.
 
 ## License
 
-MIT (or as otherwise stated in `LICENSE` when added).
+MIT — see [LICENSE](LICENSE).

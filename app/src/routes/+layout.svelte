@@ -23,8 +23,11 @@
 
 <footer>
   <p>
-    Non-custodial escrow on Solana. No KYC. No admin keys.
+    Non-custodial SOL escrow. No KYC. No admin keys. Fee only on successful release.
     <a href="https://github.com/Arian-p1/contractor">Source</a>
   </p>
-  <p class="muted">Not financial advice. Use at your own risk. See docs/LEGAL-RISK.md.</p>
+  <p class="muted">
+    Not legal, tax, or financial advice. Smart contracts can have bugs; dual-confirm can strand funds on dispute.
+    See docs/LEGAL-RISK.md. Use at your own risk.
+  </p>
 </footer>
