@@ -26,7 +26,7 @@ anchor deploy
 ## Initialize (once)
 
 ```bash
-export FEE_BPS=250
+export FEE_BPS=600
 export FEE_RECIPIENT=REPLACE_WITH_FEE_MULTISIG_PUBKEY
 export ANCHOR_PROVIDER_URL=https://api.devnet.solana.com   # or mainnet
 export ANCHOR_WALLET=~/.config/solana/id.json
@@ -39,7 +39,7 @@ Equivalent Anchor TS:
 
 ```ts
 await program.methods
-  .initialize(250, feeRecipientPubkey)
+  .initialize(600, feeRecipientPubkey)
   .accounts({ authority, config: configPda, systemProgram })
   .rpc();
 ```

@@ -9,7 +9,7 @@ Non-custodial, immutable Solana escrow. No admin, no pause, no upgrade, no emerg
 | Chain | Solana |
 | Framework | Anchor |
 | Asset (v1) | Native SOL |
-| Fee | Immutable, set at `initialize` only (default **250 bps = 2.5%**, max **1000 bps**) |
+| Fee | Immutable, set at `initialize` only (default **600 bps = 6%**, max **1000 bps**) |
 | Release | Both parties `confirm_complete` → auto-release |
 | Cancel | Both parties `confirm_cancel` → full refund to payer (no fee) |
 | Arbiter | None (would reintroduce control) |

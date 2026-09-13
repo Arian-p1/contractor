@@ -65,7 +65,7 @@ npm run build   # or: npm run dev
 4. `confirm_complete` — both → release (`fee = amount * fee_bps / 10_000`)
 5. `confirm_cancel` — both Funded → full refund; both Created → close
 
-Default fee **250 bps (2.5%)**, max **1000 bps**. Fee **only** on successful release.
+Default fee **600 bps (6%)**, max **1000 bps**. Fee **only** on successful release.
 
 ## Security model
 

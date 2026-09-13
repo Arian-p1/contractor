@@ -11,7 +11,7 @@ Launch sequence: [marketing/launch-checklist.md](./marketing/launch-checklist.md
 
 ## Elevator (30s)
 
-Hire or get hired without trusting a marketplace wallet. Contractor locks SOL in an on-chain deal PDA. Money moves only when both sides say “done,” or both say “cancel.” There’s no KYC, no arbiter, and no admin key that can seize funds. Protocol fee only on successful release (default 2.5%).
+Hire or get hired without trusting a marketplace wallet. Contractor locks SOL in an on-chain deal PDA. Money moves only when both sides say “done,” or both say “cancel.” There’s no KYC, no arbiter, and no admin key that can seize funds. Protocol fee only on successful release (default 6%).
 
 ## Value props
 
@@ -47,7 +47,7 @@ Not a freelance marketplace. Not a custody product. A minimal settlement primiti
 
 **CTAs:** Create a deal · How it works  
 
-**Fee line:** Default protocol fee 2.5% (max 10%), immutable after initialize. No admin pause, upgrade, or emergency withdraw.
+**Fee line:** Default protocol fee 6% (max 10%), immutable after initialize. No admin pause, upgrade, or emergency withdraw.
 
 ### How it works
 

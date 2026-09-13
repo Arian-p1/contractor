@@ -64,7 +64,7 @@
 <div class="container">
   <h1>Create deal</h1>
   <p class="muted">You are the payer. Funds stay in the deal PDA until dual confirmation.</p>
-  <p class="muted fee-note">Fee disclosure: protocol fee (default 2.5%) is taken only on successful dual-confirm release. Mutual cancel refunds 100%. No KYC; no custody backend.</p>
+  <p class="muted fee-note">Fee disclosure: protocol fee (default 6%) is taken only on successful dual-confirm release. Mutual cancel refunds 100%. No KYC; no custody backend.</p>
 
   <div class="card">
     <label for="payee">Payee wallet address</label>

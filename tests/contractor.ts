@@ -20,7 +20,7 @@ describe("contractor", () => {
   const payee = Keypair.generate();
   const outsider = Keypair.generate();
 
-  const FEE_BPS = 250; // 2.5%
+  const FEE_BPS = 600; // 6%
   const DEAL_AMOUNT = new BN(1 * LAMPORTS_PER_SOL);
 
   const [configPda] = PublicKey.findProgramAddressSync(
@@ -97,7 +97,7 @@ describe("contractor", () => {
 
   it("rejects initialize with fee_bps > 1000 (via fresh keypair program would need; skip if config exists)", async () => {
     // Config PDA is unique — cannot re-init. Covered by on-chain require in source.
-    // Sanity: fee math below uses 250 bps.
+    // Sanity: fee math below uses 600 bps.
     expect(FEE_BPS).to.be.lessThanOrEqual(1000);
   });
 
@@ -535,9 +535,9 @@ describe("contractor", () => {
 
   it("fee math: floor(amount * bps / 10000)", () => {
     const cases = [
-      { amount: 1_000_000_000, bps: 250, fee: 25_000_000 },
+      { amount: 1_000_000_000, bps: 600, fee: 60_000_000 },
       { amount: 1_000_000_000, bps: 1000, fee: 100_000_000 },
-      { amount: 1, bps: 250, fee: 0 }, // floors to 0
+      { amount: 1, bps: 600, fee: 0 }, // floors to 0
       { amount: 10_000, bps: 1, fee: 1 },
       { amount: 9999, bps: 1, fee: 0 },
     ];

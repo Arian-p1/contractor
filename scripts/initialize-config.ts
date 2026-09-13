@@ -2,7 +2,7 @@
  * One-shot config initialize. Non-custodial: no backend keys stored here.
  *
  * Usage:
- *   FEE_BPS=250 FEE_RECIPIENT=<pubkey> ANCHOR_PROVIDER_URL=... ANCHOR_WALLET=... \
+ *   FEE_BPS=600 FEE_RECIPIENT=<pubkey> ANCHOR_PROVIDER_URL=... ANCHOR_WALLET=... \
  *     npx ts-node --esm scripts/initialize-config.ts
  * or after `anchor build`:
  *   anchor run initialize   # if wired; else:
@@ -18,7 +18,7 @@ async function main() {
   anchor.setProvider(provider);
   const program = anchor.workspace.Contractor as Program<Contractor>;
 
-  const feeBps = Number(process.env.FEE_BPS || "250");
+  const feeBps = Number(process.env.FEE_BPS || "600");
   const feeRecipientStr = process.env.FEE_RECIPIENT;
   if (!feeRecipientStr || feeRecipientStr.startsWith("REPLACE")) {
     throw new Error("Set FEE_RECIPIENT to a real pubkey (prefer multisig).");

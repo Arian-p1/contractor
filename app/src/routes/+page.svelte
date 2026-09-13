@@ -15,7 +15,7 @@
       <a class="btn" href="#how">How it works</a>
     </div>
     <p class="muted fee-note">
-      Default protocol fee <strong>2.5%</strong> (max 10%), immutable after initialize.
+      Default protocol fee <strong>6%</strong> (max 10%), immutable after initialize.
       No admin pause, upgrade, or emergency withdraw in the program.
     </p>
   </section>

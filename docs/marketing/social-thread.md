@@ -15,7 +15,7 @@ OR both confirm cancel (100% refund, no fee).
 Neither payer nor payee can move escrowed funds alone. That’s the whole product.
 
 4/ Fee only on success.  
-Default 2.5% (max 10%), set once at initialize — no update instruction. Cancel is fee-free.
+Default 6% (max 10%), set once at initialize — no update instruction. Cancel is fee-free.
 
 5/ Non-custodial means the program PDA holds lamports.  
 We don’t run a custody backend. Your wallet signs every action.
