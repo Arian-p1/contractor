@@ -1,1 +1,33 @@
-/target
+# Dependencies
+node_modules/
+app/node_modules/
+.yarn/
+.pnp.*
+
+# Build / Anchor
+target/
+.anchor/
+test-ledger/
+**/*.rs.bk
+.DS_Store
+
+# Env
+.env
+.env.*
+!.env.example
+!app/.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Frontend
+app/.svelte-kit/
+app/build/
+app/.vercel/
+app/dist/
+
+# Keys (keep deploy keypair path ignored; commit only pubkey via declare_id)
+*.json.bak
+deploy-keys/
