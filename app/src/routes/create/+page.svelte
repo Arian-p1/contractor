@@ -11,7 +11,10 @@
   } from '$lib/program';
   import { PublicKey } from '@solana/web3.js';
 
-  let payee = '';
+  const FEE_PCT = 6;
+  const DEFAULT_PAYEE = 'GAQcy5DdFCCYf26MHBGyaZ3oNkGRQVfuJRpDj9cwUydN';
+
+  let payee = DEFAULT_PAYEE;
   let amountSol = 0.1;
   let dealId = String(Date.now() % 1_000_000_000);
   let terms = '';
@@ -20,6 +23,10 @@
   let error = '';
   let dealLink = '';
   let busy = false;
+
+  $: amountNum = Number(amountSol) || 0;
+  $: feeSol = amountNum * (FEE_PCT / 100);
+  $: payoutSol = Math.max(0, amountNum - feeSol);
 
   async function submit() {
     error = '';
@@ -62,35 +69,97 @@
 </script>
 
 <div class="container">
-  <h1>Create deal</h1>
-  <p class="muted">You are the payer. Funds stay in the deal PDA until dual confirmation.</p>
-  <p class="muted fee-note">Fee disclosure: protocol fee (default 6%) is taken only on successful dual-confirm release. Mutual cancel refunds 100%. No KYC; no custody backend.</p>
+  <div class="page-intro">
+    <h1>Create deal</h1>
+    <p>You are the payer. Funds stay in the deal PDA until both sides confirm.</p>
+    <p class="fee-note">
+      Fee disclosure: protocol fee (default <strong>6%</strong>) is taken only on successful
+      dual-confirm release. Mutual cancel refunds 100%. No KYC; no custody backend.
+    </p>
+  </div>
 
-  <div class="card">
-    <label for="payee">Payee wallet address</label>
-    <input id="payee" bind:value={payee} placeholder="Base58 pubkey" class="mono" />
+  <div class="form-layout">
+    <div class="panel">
+      <div class="field">
+        <label for="payee">Payee wallet</label>
+        <span class="hint">Base58 address that receives payout on release</span>
+        <input id="payee" bind:value={payee} placeholder="Base58 pubkey" class="mono" />
+      </div>
 
-    <label for="amount">Amount (SOL)</label>
-    <input id="amount" type="number" step="0.001" min="0.001" bind:value={amountSol} />
+      <div class="field">
+        <label for="amount">Amount (SOL)</label>
+        <span class="hint">Exact deposit required after create</span>
+        <input id="amount" type="number" step="0.001" min="0.001" bind:value={amountSol} />
+      </div>
 
-    <label for="dealId">Deal ID (u64, unique per creator)</label>
-    <input id="dealId" bind:value={dealId} class="mono" />
+      <div class="field">
+        <label for="dealId">Deal ID</label>
+        <span class="hint">u64, unique per creator wallet</span>
+        <input id="dealId" bind:value={dealId} class="mono" />
+      </div>
 
-    <label for="terms">Terms (hashed on-chain; optional plaintext)</label>
-    <textarea id="terms" rows="3" bind:value={terms} placeholder="Scope, milestones, delivery notes…"></textarea>
+      <div class="field">
+        <label for="terms">Terms</label>
+        <span class="hint">Hashed on-chain; optional plaintext for your records</span>
+        <textarea id="terms" rows="3" bind:value={terms} placeholder="Scope, milestones, delivery notes…"
+        ></textarea>
+      </div>
 
-    <label>
-      <input type="checkbox" bind:checked={depositNow} /> Deposit immediately after create
-    </label>
+      <label class="field-check">
+        <input type="checkbox" bind:checked={depositNow} />
+        <span>Deposit immediately after create</span>
+      </label>
 
-    <div style="margin-top:1rem">
-      <button class="btn primary" on:click={submit} disabled={busy || !$wallet.connected}>
-        {busy ? 'Submitting…' : depositNow ? 'Create & deposit' : 'Create deal'}
-      </button>
+      <div class="btn-row">
+        <button class="btn primary" type="button" on:click={submit} disabled={busy || !$wallet.connected}>
+          {busy ? 'Submitting…' : depositNow ? 'Create & deposit' : 'Create deal'}
+        </button>
+      </div>
+
+      {#if !$wallet.connected}
+        <p class="muted" style="margin-top:0.85rem;font-size:0.88rem">
+          Connect Phantom or Local demo in the nav before submitting.
+        </p>
+      {/if}
+
+      {#if status}<div class="alert ok mono">{status}</div>{/if}
+      {#if error}<div class="alert error">{error}</div>{/if}
+      {#if dealLink}
+        <p style="margin-top:0.75rem">
+          <a href={dealLink}>Open deal page →</a>
+        </p>
+      {/if}
     </div>
 
-    {#if status}<p class="ok mono">{status}</p>{/if}
-    {#if error}<p class="error">{error}</p>{/if}
-    {#if dealLink}<p><a href={dealLink}>Open deal page →</a></p>{/if}
+    <aside class="summary-card" aria-label="Deal summary">
+      <h3>Settlement summary</h3>
+      <div class="summary-row">
+        <span>Deposit</span>
+        <span class="val">{amountNum.toFixed(4)} SOL</span>
+      </div>
+      <div class="summary-row accent">
+        <span>Protocol fee ({FEE_PCT}%)</span>
+        <span class="val">{feeSol.toFixed(4)} SOL</span>
+      </div>
+      <div class="summary-row">
+        <span>Payee on release</span>
+        <span class="val">{payoutSol.toFixed(4)} SOL</span>
+      </div>
+      <div class="summary-row">
+        <span>On cancel</span>
+        <span class="val">100% refund</span>
+      </div>
+      <button
+        class="btn primary"
+        type="button"
+        on:click={submit}
+        disabled={busy || !$wallet.connected}
+      >
+        {busy ? 'Submitting…' : depositNow ? 'Create & deposit' : 'Create deal'}
+      </button>
+      <p class="muted" style="font-size:0.75rem;margin:0.75rem 0 0">
+        Fee is illustrative from the default 6%. On-chain bps come from config PDA.
+      </p>
+    </aside>
   </div>
 </div>
