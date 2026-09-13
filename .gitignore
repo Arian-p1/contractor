@@ -31,3 +31,7 @@ app/dist/
 # Keys (keep deploy keypair path ignored; commit only pubkey via declare_id)
 *.json.bak
 deploy-keys/
+
+.ledger/
+app/.env
+.env.devnet
