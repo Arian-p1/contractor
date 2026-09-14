@@ -5,6 +5,11 @@
 
 Non-custodial **native SOL escrow** sketch on Solana (Anchor): payer deposits into a deal PDA; funds release when **both** parties confirm complete; mutual cancel refunds the payer **100%**. Protocol fee (bps) is immutable after `initialize`.
 
+
+## UI preview
+
+![Contractor landing](docs/images/landing.jpg)
+
 ## Do not use this for real money
 
 - Smart contracts can have bugs.
