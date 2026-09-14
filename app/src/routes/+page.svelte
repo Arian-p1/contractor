@@ -102,11 +102,4 @@
     </details>
   </div>
 
-  <div class="cta-final">
-    <div>
-      <h2>Ready to settle in SOL?</h2>
-      <p>Connect a wallet, open a deal, share the link with your counterparty.</p>
-    </div>
-    <a class="btn primary" href="/create">Start a deal</a>
-  </div>
 </div>

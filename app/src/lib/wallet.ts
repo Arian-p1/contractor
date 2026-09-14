@@ -94,8 +94,16 @@ function createWallet() {
         });
       }
     },
-    /** In-browser localnet demo wallet (no extension). */
+    /** In-browser localnet demo wallet (no extension). Only available when PUBLIC_NETWORK is localnet. */
     async connectLocal() {
+      if (!isLocalNetwork()) {
+        store.update((s) => ({
+          ...s,
+          connecting: false,
+          error: 'Local demo wallet is only available on localnet.'
+        }));
+        return;
+      }
       store.update((s) => ({ ...s, connecting: true, error: null }));
       try {
         localKeypair = loadOrCreateLocalKeypair();

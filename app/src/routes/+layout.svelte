@@ -1,17 +1,7 @@
 <script lang="ts">
   import '../lib/styles.css';
-  import { wallet, shortAddress, isLocalnet } from '$lib/wallet';
+  import { wallet, shortAddress } from '$lib/wallet';
 </script>
-
-{#if isLocalnet || $wallet.mode === 'local'}
-  <div class="local-banner">
-    {#if $wallet.mode === 'local'}
-      Local demo wallet · <strong>{$shortAddress || 'connected'}</strong> · not for mainnet
-    {:else}
-      Localnet RPC · use <strong>Local demo</strong> or Phantom pointed at local
-    {/if}
-  </div>
-{/if}
 
 <nav class="nav">
   <a class="logo" href="/"><span class="logo-mark" aria-hidden="true"></span>Contractor</a>
@@ -22,26 +12,16 @@
       <span class="wallet-chip">
         <span class="dot" aria-hidden="true"></span>
         <span class="mono">{$shortAddress}</span>
-        {#if $wallet.mode === 'local'}<span class="muted">demo</span>{/if}
       </span>
       <button class="btn ghost" type="button" on:click={() => wallet.disconnect()}>Disconnect</button>
     {:else}
-      <button
-        class="btn ghost"
-        type="button"
-        on:click={() => wallet.connectLocal()}
-        disabled={$wallet.connecting}
-        title="In-browser keypair for localnet demos"
-      >
-        Local demo
-      </button>
       <button
         class="btn primary"
         type="button"
         on:click={() => wallet.connect()}
         disabled={$wallet.connecting}
       >
-        {$wallet.connecting ? 'Connecting…' : 'Connect Phantom'}
+        {$wallet.connecting ? 'Connecting…' : 'Connect wallet'}
       </button>
     {/if}
   </div>

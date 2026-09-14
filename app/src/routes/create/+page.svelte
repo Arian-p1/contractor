@@ -12,9 +12,7 @@
   import { PublicKey } from '@solana/web3.js';
 
   const FEE_PCT = 6;
-  const DEFAULT_PAYEE = 'GAQcy5DdFCCYf26MHBGyaZ3oNkGRQVfuJRpDj9cwUydN';
-
-  let payee = DEFAULT_PAYEE;
+  let payee = '';
   let amountSol = 0.1;
   let dealId = String(Date.now() % 1_000_000_000);
   let terms = '';
@@ -118,7 +116,7 @@
 
       {#if !$wallet.connected}
         <p class="muted" style="margin-top:0.85rem;font-size:0.88rem">
-          Connect Phantom or Local demo in the nav before submitting.
+          Connect a wallet in the nav before submitting.
         </p>
       {/if}
 
