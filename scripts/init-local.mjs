@@ -1,15 +1,27 @@
+/**
+ * Local/dev helper — expects FEE_RECIPIENT in env. No personal wallets in source.
+ */
 import {
   Connection, Keypair, PublicKey, SystemProgram, Transaction,
   TransactionInstruction, sendAndConfirmTransaction
 } from "@solana/web3.js";
 import fs from "fs";
 
-const connection = new Connection("http://127.0.0.1:8899", "confirmed");
+const rpc = process.env.ANCHOR_PROVIDER_URL || "http://127.0.0.1:8899";
+const feeBps = Number(process.env.FEE_BPS || "600");
+const feeRecipientStr = process.env.FEE_RECIPIENT;
+if (!feeRecipientStr || feeRecipientStr.includes("REPLACE")) {
+  console.error("Set FEE_RECIPIENT to a pubkey (do not commit real wallets).");
+  process.exit(1);
+}
+
+const connection = new Connection(rpc, "confirmed");
 const secret = JSON.parse(fs.readFileSync(process.env.HOME + "/.config/solana/id.json", "utf8"));
 const wallet = Keypair.fromSecretKey(Uint8Array.from(secret));
-const programId = new PublicKey("DPcFT7E8GWzzgUfzP3M1VgBnipr8eR5Y4yv5f28wRt7k");
-const feeBps = 600;
-const feeRecipient = new PublicKey("6E1Ex6LpamiwVEPej6yYStL9hytarsefzwv8mnfG1R8s");
+const programId = new PublicKey(
+  process.env.PUBLIC_PROGRAM_ID || "DPcFT7E8GWzzgUfzP3M1VgBnipr8eR5Y4yv5f28wRt7k"
+);
+const feeRecipient = new PublicKey(feeRecipientStr);
 const [configPda] = PublicKey.findProgramAddressSync([Buffer.from("config")], programId);
 
 const existing = await connection.getAccountInfo(configPda);
@@ -22,7 +34,7 @@ const disc = Buffer.from([175, 175, 109, 31, 13, 152, 155, 237]);
 const data = Buffer.alloc(8 + 2 + 32);
 disc.copy(data, 0);
 data.writeUInt16LE(feeBps, 8);
-feeRecipient.toBytes().forEach((b, i) => data[10 + i] = b);
+Buffer.from(feeRecipient.toBytes()).copy(data, 10);
 
 const ix = new TransactionInstruction({
   programId,
@@ -35,10 +47,4 @@ const ix = new TransactionInstruction({
 });
 
 const sig = await sendAndConfirmTransaction(connection, new Transaction().add(ix), [wallet]);
-console.log({
-  program: programId.toBase58(),
-  config: configPda.toBase58(),
-  feeBps,
-  feeRecipient: feeRecipient.toBase58(),
-  initializeTx: sig,
-});
+console.log({ program: programId.toBase58(), config: configPda.toBase58(), feeBps, initializeTx: sig });

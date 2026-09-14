@@ -1,19 +1,16 @@
-# Contractor
+# Contractor (experimental archive)
 
-Non-custodial, anonymous **native SOL escrow** on Solana (Anchor 0.30.1).
+> **Status: not in production.** Learning / open-source experiment only.  
+> No mainnet launch, no fee collection, no public marketing from this repo’s authors.
 
-Payer deposits SOL into a deal PDA. Funds **release** only when **both** parties confirm complete (protocol fee applies). **Mutual cancel** refunds the payer **100%** (no fee). No KYC. No admin / pause / upgrade / emergency withdraw.
+Non-custodial **native SOL escrow** sketch on Solana (Anchor): payer deposits into a deal PDA; funds release when **both** parties confirm complete; mutual cancel refunds the payer **100%**. Protocol fee (bps) is immutable after `initialize`.
 
-## Build status (box-verified)
+## Do not use this for real money
 
-| Check | Status |
-|-------|--------|
-| `anchor build --no-idl` | ✅ SBF `.so` builds (platform-tools **v1.48** / rustc 1.84; see [docs/BUILD-NOTES.md](docs/BUILD-NOTES.md)) |
-| IDL via `anchor build` | ⚠️ Host rustc 1.98 vs `anchor-syn` 0.30.1 — use committed [idl/contractor.json](idl/contractor.json) + `anchor idl type` |
-| `anchor test --skip-build` | ✅ **14 passing** |
-| `cd app && npm run build` | ✅ static `adapter-static` → `app/build/` |
-
-Program id (dev keypair): `DPcFT7E8GWzzgUfzP3M1VgBnipr8eR5Y4yv5f28wRt7k`
+- Smart contracts can have bugs.
+- Dual-confirm with **no arbiter** can permanently lock funds if parties disagree.
+- Non-custodial ≠ legal or regulatory clearance. Read [docs/LEGAL-RISK.md](docs/LEGAL-RISK.md).
+- If you fork it, you are responsible for your own compliance and security.
 
 ## State machine
 
@@ -28,71 +25,48 @@ stateDiagram-v2
     Refunded --> [*]
 ```
 
-## Quickstart
+## Quickstart (devnet / local)
 
 ```bash
-# Program (see docs/BUILD-NOTES.md for toolchain pins)
-anchor build --no-idl
-cp idl/contractor.json target/idl/contractor.json
-mkdir -p target/types
-anchor idl type target/idl/contractor.json -o target/types/contractor.ts
-anchor test --skip-build
+# Program
+anchor build
+anchor test
 
 # Frontend (static / IPFS-ready)
 cd app
-cp .env.example .env
+cp .env.example .env   # leave fee recipient empty unless you know what you're doing
 npm install
-npm run build   # or: npm run dev
+npm run dev
 ```
 
-## Repo layout
+Default example fee in docs/tests: **600 bps (6%)**, max **1000 bps**. Fee only on successful release. Set `FEE_RECIPIENT` via environment — **never commit personal wallets**.
+
+## Layout
 
 | Path | Purpose |
 |------|---------|
 | `programs/contractor/` | Anchor program |
 | `tests/` | Integration tests |
-| `app/` | SvelteKit + wallet UI (`adapter-static`) |
-| `idl/` | Checked-in IDL (workaround for host IDL codegen) |
-| `scripts/` | Initialize config, `--final` upgrade authority, launch checklist |
-| `docs/` | Architecture, deploy/IPFS, **marketing**, legal-risk |
-| `docs/marketing/` | Social thread + launch checklist |
+| `app/` | SvelteKit UI (`adapter-static`) |
+| `docs/` | Architecture, deploy notes, legal-risk, sample marketing copy |
 
 ## Instructions
 
 1. `initialize(fee_bps, fee_recipient)` — once; `1..=1000` bps; **no update ix**
 2. `create_deal(deal_id, payee, amount, terms_hash)` — signer = payer = creator
 3. `deposit` — exact amount; Created → Funded
-4. `confirm_complete` — both → release (`fee = amount * fee_bps / 10_000`)
+4. `confirm_complete` — both → release
 5. `confirm_cancel` — both Funded → full refund; both Created → close
 
-Default fee **600 bps (6%)**, max **1000 bps**. Fee **only** on successful release.
+## Security model (design intent)
 
-## Security model
-
-- Deal PDA holds lamports; dual confirmation required for release
+- Deal PDA holds lamports; dual confirmation for release
 - Config fee immutable after `initialize`
-- Documented deploy: `solana program set-upgrade-authority … --final`, discard deployer key
-- Exact deposit amount; status gates prevent double release
+- Documented path: `solana program set-upgrade-authority … --final`, discard deployer key
+- Exact deposit; status gates against double release
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/DEPLOY.md](docs/DEPLOY.md).
-
-## Marketing & legal
-
-- Go-to-market copy, landing blocks, social drafts: [docs/MARKETING.md](docs/MARKETING.md)
-- Launch sequence: [docs/marketing/launch-checklist.md](docs/marketing/launch-checklist.md)
-- Honest risk notes (not legal advice): [docs/LEGAL-RISK.md](docs/LEGAL-RISK.md)
-
-## What’s next for launch
-
-1. Independent **security audit** + fix findings  
-2. **Counsel** before collecting mainnet fees  
-3. Fee recipient → published **multisig**  
-4. Devnet demo → mainnet deploy + `--final`  
-5. Pin UI to **IPFS** / optional SNS  
-6. Optional later: SPL tokens, timeouts (explicit v1 non-goals)
-
-Use `./scripts/checklist-mainnet.sh` as a printable gate.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see `LICENSE`.

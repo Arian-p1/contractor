@@ -1,3 +1,5 @@
+> **Sample copy only.** Not an active go-to-market plan. Project is archived from production launch.
+
 # Marketing — Contractor (go-to-market pack)
 
 > Positioning: minimal **non-custodial SOL escrow** primitive. Not a marketplace. Not custody. Not legal advice.
